@@ -31,4 +31,4 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/sensitive:latest
             docker stop sensitive || true
             docker rm sensitive || true
-            docker run -d --name sensitive -p 80:80 ${{ secrets.DOCKER_USERNAME }}/sensitive:latest
+            docker run -d --name sensitive -p 80:3000 ${{ secrets.DOCKER_USERNAME }}/sensitive:latest
