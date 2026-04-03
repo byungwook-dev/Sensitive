@@ -11,9 +11,6 @@ RUN npm install
 # 나머지 소스 복사
 COPY . .
 
-# 빌드 (필요하다면)
-RUN npm run build
-
 # 컨테이너 실행 시 시작할 명령어
 CMD ["npm", "start"]
 
