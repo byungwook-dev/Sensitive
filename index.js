@@ -11,13 +11,14 @@ const __dirname = path.dirname(__filename);
 // React 빌드 결과물 서빙
 app.use(express.static(path.join(__dirname, "build")));
 
-// 기본 라우트
+// 기본 라우트 (홈)
 app.get("/", (req, res) => {
-  res.send("Hello Sensitive Project!");
+  res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
-// React 라우팅 지원
-app.get("*", (req, res) => {
+// React 라우팅 지원 (catch-all)
+// Express 5에서는 '*' 대신 정규식 사용
+app.get(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 

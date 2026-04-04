@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "node index.js",
     "build": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
