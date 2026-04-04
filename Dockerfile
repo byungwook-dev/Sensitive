@@ -7,7 +7,8 @@ RUN npm install
 
 COPY . .
 
-# React 빌드 실행
+# React 빌드 실행 (OpenSSL 호환 모드 활성화)
+ENV NODE_OPTIONS=--openssl-legacy-provider
 RUN npm run build
 
 CMD ["npm", "start"]
