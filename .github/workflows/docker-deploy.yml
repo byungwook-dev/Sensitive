@@ -7,10 +7,17 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true  # Node.js 24 환경 강제 적용
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4   # 최신 버전
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'        # Node.js 24로 맞춤
 
       - name: Build Docker image
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/sensitive:latest .
