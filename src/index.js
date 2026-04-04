@@ -1,26 +1,12 @@
-import express from "express";
-import path from "path";
-import { fileURLToPath } from "url";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
 
-const app = express();
-const PORT = 3000;
+// React 18 방식으로 root 생성
+const root = ReactDOM.createRoot(document.getElementById("root"));
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// React 빌드 결과물 서빙
-app.use(express.static(path.join(__dirname, "build")));
-
-// 기본 라우트
-app.get("/", (req, res) => {
-  res.send("Hello Sensitive Project!");
-});
-
-// React 라우팅 지원
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "build", "index.html"));
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+);
