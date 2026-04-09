@@ -1,0 +1,42 @@
+import { Student, PersonalityType, TraitType, Gender } from '@/types';
+
+const data: { name: string; gender: Gender; age: number; personality: PersonalityType; trait: TraitType; score: number; note?: string }[] = [
+  { name: '김민준', gender: '남', age: 14, personality: '리더형', trait: '외향적', score: 82 },
+  { name: '이서연', gender: '여', age: 14, personality: '협동형', trait: '사교적', score: 65 },
+  { name: '박지호', gender: '남', age: 14, personality: '분석형', trait: '이성적', score: 91 },
+  { name: '최수아', gender: '여', age: 14, personality: '신중형', trait: '내향적', score: 73 },
+  { name: '정우진', gender: '남', age: 14, personality: '적극형', trait: '적극적', score: 58 },
+  { name: '강하은', gender: '여', age: 14, personality: '창의형', trait: '감성적', score: 88, note: '미술 특기생' },
+  { name: '조민서', gender: '남', age: 15, personality: '리더형', trait: '적극적', score: 47 },
+  { name: '윤서준', gender: '여', age: 15, personality: '협동형', trait: '사교적', score: 76 },
+  { name: '임지우', gender: '남', age: 15, personality: '분석형', trait: '독립적', score: 94 },
+  { name: '한예린', gender: '여', age: 15, personality: '신중형', trait: '소심한편', score: 61 },
+  { name: '신동현', gender: '남', age: 15, personality: '적극형', trait: '외향적', score: 85, note: '체육부장' },
+  { name: '오수빈', gender: '여', age: 15, personality: '창의형', trait: '감성적', score: 69 },
+  { name: '장태윤', gender: '남', age: 15, personality: '리더형', trait: '외향적', score: 53 },
+  { name: '권나은', gender: '여', age: 15, personality: '협동형', trait: '사교적', score: 78 },
+  { name: '황준혁', gender: '남', age: 16, personality: '분석형', trait: '이성적', score: 96 },
+  { name: '배소연', gender: '여', age: 16, personality: '신중형', trait: '내향적', score: 64 },
+  { name: '류하준', gender: '남', age: 16, personality: '적극형', trait: '적극적', score: 72 },
+  { name: '문지민', gender: '여', age: 16, personality: '창의형', trait: '감성적', score: 87 },
+  { name: '서예은', gender: '여', age: 16, personality: '협동형', trait: '소심한편', score: 55 },
+  { name: '양도윤', gender: '남', age: 16, personality: '리더형', trait: '외향적', score: 79, note: '학급 반장' },
+  { name: '송채원', gender: '여', age: 16, personality: '분석형', trait: '독립적', score: 90 },
+  { name: '전민재', gender: '남', age: 16, personality: '신중형', trait: '이성적', score: 67 },
+  { name: '홍서윤', gender: '여', age: 15, personality: '적극형', trait: '사교적', score: 83 },
+  { name: '노준서', gender: '남', age: 15, personality: '창의형', trait: '감성적', score: 48 },
+  { name: '고은서', gender: '여', age: 14, personality: '협동형', trait: '사교적', score: 75 },
+  { name: '유하린', gender: '여', age: 14, personality: '리더형', trait: '적극적', score: 92 },
+  { name: '남현우', gender: '남', age: 16, personality: '분석형', trait: '독립적', score: 56 },
+  { name: '심다은', gender: '여', age: 15, personality: '신중형', trait: '소심한편', score: 71 },
+  { name: '안지훈', gender: '남', age: 14, personality: '적극형', trait: '외향적', score: 63 },
+  { name: '백서현', gender: '여', age: 16, personality: '창의형', trait: '감성적', score: 86 },
+  { name: '한도경', gender: '남', age: 15, personality: '협동형', trait: '내향적', score: 74 },
+  { name: '정수현', gender: '여', age: 14, personality: '리더형', trait: '적극적', score: 81 },
+  { name: '이준혁', gender: '남', age: 16, personality: '분석형', trait: '이성적', score: 68 },
+];
+
+export const dummyStudents: Student[] = data.map((d, i) => ({
+  id: `student-${i + 1}`,
+  ...d,
+}));
