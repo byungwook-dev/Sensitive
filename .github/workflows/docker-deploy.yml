@@ -2,7 +2,9 @@ name: CI/CD to EC2
 
 on:
   push:
-    branches: [ "main", "feature/add-dockerfile" ]
+    branches:
+      - main
+      - feature/add-dockerfile
 
 jobs:
   build-and-deploy:
@@ -15,7 +17,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'   # Node 22 사용
+          node-version: '22'
 
       - name: Build Docker image
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/sensitive:latest .
