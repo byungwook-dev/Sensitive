@@ -2,7 +2,7 @@ name: CI/CD to EC2
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "feature/docker-deploy" ]
 
 jobs:
   build-and-deploy:
