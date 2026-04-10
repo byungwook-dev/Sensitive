@@ -16,5 +16,5 @@ RUN npm run build
 # 포트 노출
 EXPOSE 3000
 
-# Next.js 서버 실행
+# Next.js 서버 실행!
 CMD ["npm", "run", "start"]
