@@ -218,6 +218,16 @@ export default function DashboardPage() {
           <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
             <h3 className="mb-1 text-sm font-bold text-slate-900">팀별 성적 분포</h3>
             <p className="mb-3 text-[10px] text-slate-400">막대: 최저~최고 · 굵은 부분: 평균±편차 · 선: 평균</p>
+            {/* 스케일 눈금 */}
+            <div className="flex items-center gap-2 mb-1">
+              <span className="w-12 shrink-0" />
+              <div className="flex-1 flex justify-between px-0.5">
+                {[0, 25, 50, 75, 100].map(n => (
+                  <span key={n} className="text-[9px] text-slate-300 font-medium">{n}</span>
+                ))}
+              </div>
+              <span className="w-8 shrink-0" />
+            </div>
             <div className="space-y-2.5">
               {teams.map(team => {
                 const members = students.filter(s => team.memberIds.includes(s.id));
