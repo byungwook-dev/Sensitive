@@ -7,7 +7,27 @@ import { ScoreSystem, SCORE_SYSTEM_LABELS, SCORE_SYSTEM_DESC } from '@/types';
 const SCORE_SYSTEMS: ScoreSystem[] = ['score100', 'gpa45', 'gpa43', 'grade', 'custom'];
 
 export default function SettingsPage() {
-  const { scoreSystem, setScoreSystem, customMax, setCustomMax } = useStore();
+  const { scoreSystem, setScoreSystem, customMax, setCustomMax, students, teams } = useStore();
+
+  const exportCSV = () => {
+    if (students.length === 0) { alert('내보낼 학생 데이터가 없습니다.'); return; }
+    const teamMap = new Map<string, string>();
+    teams.forEach(t => t.memberIds.forEach(id => teamMap.set(id, t.name)));
+    const header = '이름,성별,나이,성격,성향,성적,팀/반,특이사항';
+    const rows = students.map(s =>
+      [s.name, s.gender, s.age, s.personality, s.trait || '', s.score, teamMap.get(s.id) || '미배정', s.note || '']
+        .map(v => `"${String(v).replace(/"/g, '""')}"`)
+        .join(',')
+    );
+    const bom = '\uFEFF';
+    const blob = new Blob([bom + header + '\n' + rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `학생데이터_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="max-w-2xl space-y-6">
@@ -164,7 +184,7 @@ export default function SettingsPage() {
       <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <h3 className="mb-4 text-sm font-bold text-slate-900">데이터</h3>
         <div className="flex gap-3">
-          <button className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
+          <button onClick={exportCSV} className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
             학생 데이터 내보내기 (CSV)
           </button>
           <button
