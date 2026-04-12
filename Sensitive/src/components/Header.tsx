@@ -24,11 +24,16 @@ export default function Header() {
   const page = pageTitles[pathname] || { title: 'TeamBuilder AI', description: '' };
   const [user, setUser] = useState<UserInfo | null>(null);
   const [showMenu, setShowMenu] = useState(false);
+  const [aiActive, setAiActive] = useState(false);
 
   useEffect(() => {
     fetch('/api/auth/me').then(res => res.ok ? res.json() : null).then(data => {
       if (data?.user) setUser(data.user);
     }).catch(() => {});
+
+    fetch('/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ team: { name: 'test' }, members: [] }) })
+      .then(res => setAiActive(res.ok))
+      .catch(() => setAiActive(false));
   }, []);
 
   const handleLogout = async () => {
@@ -45,8 +50,8 @@ export default function Header() {
       </div>
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2">
-          <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-xs font-medium text-slate-600">AI 엔진 활성</span>
+          <div className={`h-2 w-2 rounded-full ${aiActive ? 'bg-emerald-500 animate-pulse' : 'bg-red-400'}`} />
+          <span className="text-xs font-medium text-slate-600">{aiActive ? 'AI 엔진 활성' : 'AI 엔진 비활성'}</span>
         </div>
         {/* 사용자 */}
         <div className="relative">
