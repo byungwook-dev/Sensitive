@@ -50,11 +50,18 @@ export function calculateBalanceScore(teams: Team[], students: Student[], weight
   const sizes = active.map(s => s.memberCount);
   const sizeBalance = R(Math.max(0, 100 - rng(sizes) * 15 - std(sizes) * 20));
 
+  // 로그 기반 곱연산 (한 항목이라도 낮으면 전체 급락)
   const total = w.score + w.personality + w.trait + w.gender + w.age + w.size;
-  const overall = R(
-    scoreBalance * (w.score / total) + pBalance * (w.personality / total) + tBalance * (w.trait / total) +
-    genderBalance * (w.gender / total) + ageBalance * (w.age / total) + sizeBalance * (w.size / total)
-  );
+  const scores = [
+    { val: Math.max(1, scoreBalance), weight: w.score / total },
+    { val: Math.max(1, pBalance), weight: w.personality / total },
+    { val: Math.max(1, tBalance), weight: w.trait / total },
+    { val: Math.max(1, genderBalance), weight: w.gender / total },
+    { val: Math.max(1, ageBalance), weight: w.age / total },
+    { val: Math.max(1, sizeBalance), weight: w.size / total },
+  ];
+  const logSum = scores.reduce((sum, s) => sum + s.weight * Math.log(s.val), 0);
+  const overall = R(Math.min(100, Math.exp(logSum)));
   return { overall, scoreBalance, genderBalance, personalityBalance: pBalance, traitBalance: tBalance, ageBalance, sizeBalance };
 }
 
@@ -297,18 +304,22 @@ function qScore(teams: Team[], sm: Map<string, Student>): number {
 
   if (data.length < 2) return 100;
 
-  const sPen = rng(data.map(d => d.avgScore)) * 3 + std(data.map(d => d.avgScore)) * 5;
+  // 각 항목별 점수 (0~100)
+  const sScore = Math.max(1, 100 - rng(data.map(d => d.avgScore)) * 3 - std(data.map(d => d.avgScore)) * 5);
   let pPen = 0;
   ALL_PERSONALITIES.forEach(p => { pPen += std(data.map(d => d.pDist[p] / d.mc)); });
-  pPen *= 55;
+  const pScore = Math.max(1, 100 - pPen * 55);
   let tPen = 0;
   ALL_TRAITS.forEach(tr => { tPen += std(data.map(d => d.tDist[tr] / d.mc)); });
-  tPen *= 65;
-  const gPen = std(data.map(d => d.maleRatio)) * 100;
+  const tScore = Math.max(1, 100 - tPen * 65);
+  const gScore = Math.max(1, 100 - std(data.map(d => d.maleRatio)) * 100);
   const szDiff = rng(data.map(d => d.mc));
-  const szPen = szDiff <= 1 ? 0 : szDiff * 15;
+  const szScore = Math.max(1, 100 - (szDiff <= 1 ? 0 : szDiff * 15));
 
-  return Math.max(0, 100 - sPen - pPen - tPen - gPen - szPen);
+  // 로그 기반 곱연산
+  const w = { s: 0.3, p: 0.26, t: 0.26, g: 0.1, sz: 0.08 };
+  const logSum = w.s * Math.log(sScore) + w.p * Math.log(pScore) + w.t * Math.log(tScore) + w.g * Math.log(gScore) + w.sz * Math.log(szScore);
+  return Math.max(0, Math.min(100, Math.exp(logSum)));
 }
 
 function scoreDeviation(teams: Team[], sm: Map<string, Student>, globalAvg: number): number {

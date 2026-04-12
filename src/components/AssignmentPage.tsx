@@ -252,17 +252,15 @@ export default function AssignmentPage({ mode }: { mode: AssignmentMode }) {
 
   // ── Quick Create Teams ──
   const handleQuickCreate = (count: number) => {
-    const existing = teams.length;
-    const perTeam = Math.ceil(students.length / (existing + count));
-    for (let i = 0; i < count; i++) {
-      addTeam({
-        id: `team-${Date.now()}-${i}`,
-        name: `${label} ${existing + i + 1}`,
-        maxMembers: perTeam,
-        minMembers: Math.max(1, perTeam - 2),
-        memberIds: [],
-      });
-    }
+    const perTeam = Math.ceil(students.length / count);
+    const newTeams = Array.from({ length: count }, (_, i) => ({
+      id: `team-${Date.now()}-${i}`,
+      name: `${label} ${i + 1}`,
+      maxMembers: perTeam,
+      minMembers: Math.max(1, perTeam - 2),
+      memberIds: [],
+    }));
+    setTeams(newTeams);
   };
 
   const handleAddTeam = () => {
