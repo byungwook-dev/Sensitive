@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useStore } from '@/store/useStore';
 
 interface ChatMessage {
@@ -10,9 +11,10 @@ interface ChatMessage {
 
 export default function AIChatBot() {
   const { students, teams } = useStore();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'assistant', content: '안녕하세요! 배정 현황에 대해 궁금한 점을 물어보세요.\n\n예시:\n- 지금 평균 성적이 제일 높은 팀은?\n- 성별 비율이 가장 안 맞는 반은?\n- 리더형이 없는 팀이 있어?\n- 전체 배정 상태를 분석해줘' },
+    { role: 'assistant', content: '안녕하세요! 무엇이든 물어보세요.\n\n📊 데이터 분석\n- 평균 성적이 제일 높은 팀은?\n- 시너지가 가장 좋은 팀은?\n\n🔍 기능 안내\n- 이 앱 뭐 할 수 있어?\n- 균형 점수가 뭐야?\n\n🚀 페이지 이동\n- 설정 열어줘\n- 학생 관리로 가줘' },
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -42,7 +44,13 @@ export default function AIChatBot() {
 
       if (res.ok) {
         const { reply } = await res.json();
-        setMessages((prev) => [...prev, { role: 'assistant', content: reply }]);
+        // [navigate:/path] 태그 감지 → 페이지 이동
+        const navMatch = reply.match(/\[navigate:(\/[^\]]*)\]/);
+        const cleanReply = reply.replace(/\[navigate:\/[^\]]*\]/g, '').trim();
+        setMessages((prev) => [...prev, { role: 'assistant', content: cleanReply }]);
+        if (navMatch) {
+          setTimeout(() => router.push(navMatch[1]), 800);
+        }
       } else {
         setMessages((prev) => [...prev, { role: 'assistant', content: '죄송합니다, 응답을 가져오지 못했습니다.' }]);
       }
@@ -79,7 +87,7 @@ export default function AIChatBot() {
             </div>
             <div>
               <h4 className="text-sm font-bold text-white">AI 어시스턴트</h4>
-              <p className="text-[10px] text-blue-100">배정 현황 분석 & 질의응답</p>
+              <p className="text-[10px] text-blue-100">데이터 분석 · 기능 안내 · 페이지 이동</p>
             </div>
             <div className="ml-auto flex items-center gap-1.5">
               <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -117,7 +125,7 @@ export default function AIChatBot() {
           {/* Quick Actions */}
           {messages.length <= 2 && (
             <div className="flex gap-1.5 overflow-x-auto border-t border-slate-100 px-4 py-2">
-              {['평균 성적 비교', '성별 비율 분석', '배정 상태 요약'].map((q) => (
+              {['배정 상태 요약', '시너지 분석', '이 앱 뭐 할 수 있어?', '설정 열어줘'].map((q) => (
                 <button
                   key={q}
                   onClick={() => { setInput(q); }}
@@ -136,7 +144,7 @@ export default function AIChatBot() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
-                placeholder="배정 현황에 대해 질문하세요..."
+                placeholder="무엇이든 물어보세요..."
                 disabled={isLoading}
                 className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none placeholder:text-slate-400 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-100 disabled:opacity-50"
               />
