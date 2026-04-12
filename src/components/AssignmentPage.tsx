@@ -489,7 +489,7 @@ export default function AssignmentPage({ mode }: { mode: AssignmentMode }) {
             </div>
             <div className="grid grid-cols-6 gap-3">
               {[
-                { label: '성적 균형', value: balance.scoreBalance, desc: '팀 간 평균 성적 차이' },
+                { label: '성적 균형', value: balance.scoreBalance, desc: '팀 간 평균 차이 ↓ · 팀 내 편차 고려 (평균이 같아도 30+100 ≠ 60+70)' },
                 { label: '성별 균형', value: balance.genderBalance, desc: '팀 간 남녀 비율 차이' },
                 { label: '성격 시너지', value: balance.personalityBalance, desc: '리더+협동 ↑ · 분석+창의 ↑ · 같은 유형 중복 ↓' },
                 { label: '성향 시너지', value: balance.traitBalance, desc: '외향+내향 ↑ · 감성+이성 ↑ · 같은 성향 중복 ↓' },
