@@ -26,7 +26,7 @@ function getMissing(s: Student): string[] {
 }
 
 export default function StudentsPage() {
-  const { students, addStudent, updateStudent, deleteStudent, teams, studentGroups, activeGroupId, addStudentGroup, deleteStudentGroup, setActiveGroup, setStudents, setTeams, scoreSystem } = useStore();
+  const { students, addStudent, updateStudent, deleteStudent, teams, studentGroups, activeGroupId, addStudentGroup, deleteStudentGroup, setActiveGroup, setStudents, setTeams, scoreSystem, renameStudentGroup } = useStore();
   const [search, setSearch] = useState('');
   const [genderFilter, setGenderFilter] = useState<string>('all');
   const [personalityFilter, setPersonalityFilter] = useState<string>('all');
@@ -37,6 +37,8 @@ export default function StudentsPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showNoteHelp, setShowNoteHelp] = useState(false);
   const [showScoreHelp, setShowScoreHelp] = useState(false);
+  const [editingGroupId, setEditingGroupId] = useState<string | null>(null);
+  const [editingGroupName, setEditingGroupName] = useState('');
   const [newGroupName, setNewGroupName] = useState('');
 
   // 학생이 속한 팀 찾기
@@ -108,95 +110,116 @@ export default function StudentsPage() {
 
       {/* 학생 그룹 */}
       <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <div className="flex items-center gap-3 mb-3">
-          <h4 className="text-sm font-bold text-slate-900">학생 그룹</h4>
-          <span className="text-[11px] text-slate-400">학생 세트를 저장하고 전환할 수 있습니다</span>
-        </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          {/* 현재 */}
-          <button
-            onClick={() => setActiveGroup(null)}
-            className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${!activeGroupId ? 'bg-blue-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
-          >
-            현재 ({students.length}명)
-          </button>
-          {/* 저장된 그룹 */}
-          {studentGroups.map(g => (
-            <div key={g.id} className="flex items-center gap-1">
-              <button
-                onClick={() => {
-                  if (confirm(`"${g.name}" (${g.students.length}명)을 불러올까요? 현재 학생/팀 데이터가 교체됩니다.`)) {
-                    setActiveGroup(g.id);
-                  }
-                }}
-                className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${activeGroupId === g.id ? 'bg-blue-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
-              >
-                {g.name} ({g.students.length}명)
-              </button>
-              <button
-                onClick={() => { if (confirm(`"${g.name}" 그룹을 삭제하시겠습니까?`)) deleteStudentGroup(g.id); }}
-                className="rounded p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 transition"
-              >
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              </button>
-            </div>
-          ))}
-          {/* 새 그룹 저장 */}
-          <div className="flex items-center gap-1.5 ml-2">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            <h4 className="text-sm font-bold text-slate-900">학생 그룹</h4>
+            <span className="text-[10px] text-slate-400">더블클릭으로 이름 변경</span>
+          </div>
+          <div className="flex items-center gap-1.5">
             <input
               value={newGroupName}
               onChange={(e) => setNewGroupName(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && newGroupName.trim()) {
-                  addStudentGroup({
-                    id: `group-${Date.now()}`,
-                    name: newGroupName.trim(),
-                    students: [...students],
-                    teams: [...teams],
-                    createdAt: new Date().toISOString(),
-                  });
+                if (e.key === 'Enter') {
+                  const name = newGroupName.trim() || `그룹 ${studentGroups.length + 1}`;
+                  addStudentGroup({ id: `group-${Date.now()}`, name, students: [...students], teams: [...teams], createdAt: new Date().toISOString() });
                   setNewGroupName('');
                 }
               }}
               placeholder="그룹 이름..."
-              className="w-28 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs outline-none focus:border-blue-400"
+              className="w-28 rounded-lg border border-slate-200 px-2.5 py-1.5 text-[11px] outline-none focus:border-blue-400"
             />
             <button
               onClick={() => {
                 const name = newGroupName.trim() || `그룹 ${studentGroups.length + 1}`;
-                addStudentGroup({
-                  id: `group-${Date.now()}`,
-                  name,
-                  students: [...students],
-                  teams: [...teams],
-                  createdAt: new Date().toISOString(),
-                });
+                addStudentGroup({ id: `group-${Date.now()}`, name, students: [...students], teams: [...teams], createdAt: new Date().toISOString() });
                 setNewGroupName('');
               }}
-              className="rounded-lg bg-slate-800 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-slate-700 transition"
+              className="rounded-lg bg-slate-800 px-3 py-1.5 text-[11px] font-semibold text-white hover:bg-slate-700 transition whitespace-nowrap"
             >
-              현재 학생 저장
+              현재 저장
             </button>
             <button
               onClick={() => {
                 const name = newGroupName.trim() || `새 그룹 ${studentGroups.length + 1}`;
-                // 현재 데이터를 기존 그룹에 저장하고 새 빈 그룹으로 전환
                 const newId = `group-${Date.now()}`;
-                addStudentGroup({
-                  id: newId,
-                  name,
-                  students: [],
-                  teams: [],
-                  createdAt: new Date().toISOString(),
-                });
+                addStudentGroup({ id: newId, name, students: [], teams: [], createdAt: new Date().toISOString() });
                 setActiveGroup(newId);
                 setNewGroupName('');
               }}
-              className="rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-100 transition"
+              className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-[11px] font-semibold text-blue-700 hover:bg-blue-100 transition whitespace-nowrap"
             >
               + 새 그룹
             </button>
           </div>
+        </div>
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-2">
+          {/* 현재 그룹 */}
+          <div
+            onClick={() => setActiveGroup(null)}
+            className={`flex items-center justify-between rounded-lg px-3 py-2.5 cursor-pointer transition ${!activeGroupId ? 'bg-blue-600 text-white shadow-sm' : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200'}`}
+          >
+            <div>
+              <p className={`text-xs font-bold ${!activeGroupId ? 'text-white' : 'text-slate-800'}`}>현재</p>
+              <p className={`text-[10px] ${!activeGroupId ? 'text-blue-100' : 'text-slate-400'}`}>{students.length}명 · {teams.length}팀</p>
+            </div>
+            {!activeGroupId && <span className="text-[9px] bg-white/20 rounded px-1.5 py-0.5 font-medium">활성</span>}
+          </div>
+          {/* 저장된 그룹 */}
+          {studentGroups.map(g => (
+            <div
+              key={g.id}
+              onClick={() => {
+                if (editingGroupId === g.id) return;
+                if (confirm(`"${g.name}" (${g.students.length}명)을 불러올까요?`)) setActiveGroup(g.id);
+              }}
+              onDoubleClick={(e) => {
+                e.stopPropagation();
+                setEditingGroupId(g.id);
+                setEditingGroupName(g.name);
+              }}
+              className={`group flex items-center justify-between rounded-lg px-3 py-2.5 cursor-pointer transition relative ${activeGroupId === g.id ? 'bg-blue-600 text-white shadow-sm' : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200'}`}
+            >
+              <div className="min-w-0 flex-1">
+                {editingGroupId === g.id ? (
+                  <input
+                    autoFocus
+                    value={editingGroupName}
+                    onChange={(e) => setEditingGroupName(e.target.value)}
+                    onBlur={() => {
+                      if (editingGroupName.trim()) renameStudentGroup(g.id, editingGroupName.trim());
+                      setEditingGroupId(null);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        if (editingGroupName.trim()) renameStudentGroup(g.id, editingGroupName.trim());
+                        setEditingGroupId(null);
+                      }
+                      if (e.key === 'Escape') setEditingGroupId(null);
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-full bg-white text-slate-800 text-xs font-bold rounded px-1.5 py-0.5 outline-none border border-blue-400 ring-2 ring-blue-100"
+                  />
+                ) : (
+                  <>
+                    <p className={`text-xs font-bold truncate ${activeGroupId === g.id ? 'text-white' : 'text-slate-800'}`}>{g.name}</p>
+                    <p className={`text-[10px] ${activeGroupId === g.id ? 'text-blue-100' : 'text-slate-400'}`}>
+                      {g.students.length}명 · {g.teams.length}팀 · {new Date(g.createdAt).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })}
+                    </p>
+                  </>
+                )}
+              </div>
+              {activeGroupId === g.id && <span className="text-[9px] bg-white/20 rounded px-1.5 py-0.5 font-medium shrink-0 ml-1">활성</span>}
+              {/* 삭제 버튼 */}
+              <button
+                onClick={(e) => { e.stopPropagation(); if (confirm(`"${g.name}" 삭제?`)) deleteStudentGroup(g.id); }}
+                className={`absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition ${activeGroupId === g.id ? 'bg-blue-800' : 'bg-red-500'}`}
+              >
+                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+          ))}
         </div>
       </div>
 
