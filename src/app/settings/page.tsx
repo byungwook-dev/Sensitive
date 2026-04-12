@@ -231,7 +231,7 @@ function WeightsEditor() {
   const isValid = total === 100;
 
   const items = [
-    { key: 'score' as const, label: '성적 균형', color: 'text-blue-600', desc: '팀 간 평균 성적 차이를 최소화합니다. 높을수록 팀별 성적이 고르게 분배됩니다.' },
+    { key: 'score' as const, label: '성적 균형', color: 'text-blue-600', desc: '팀 간 평균 차이 + 팀 내 편차를 함께 고려합니다. 평균이 같아도 분포가 다르면 점수가 달라집니다.' },
     { key: 'personality' as const, label: '성격 시너지', color: 'text-purple-600', desc: '리더+협동, 분석+창의 등 보완적 성격 조합으로 팀 시너지를 높입니다.' },
     { key: 'trait' as const, label: '성향 시너지', color: 'text-pink-600', desc: '외향+내향, 감성+이성 등 보완적 성향 조합으로 팀 시너지를 높입니다.' },
     { key: 'gender' as const, label: '성별 균형', color: 'text-cyan-600', desc: '남녀 비율이 팀마다 비슷하도록 조정합니다.' },
