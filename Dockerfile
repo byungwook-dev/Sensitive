@@ -8,7 +8,7 @@ RUN npm install
 # Sensitive 폴더 전체 복사
 COPY Sensitive/. .
 
-# 빌드 시 환경변수 전달
+# 빌드 시 환경변수 전달!
 ARG MONGODB_URI
 ARG NEXT_SERVER_ACTIONS_ENCRYPTION_KEY
 ARG AI_API_KEY
