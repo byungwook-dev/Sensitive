@@ -34,6 +34,7 @@ export default function BoardPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(Object.keys(teamAnalyses).length > 0);
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
+  const [analyzingTeamId, setAnalyzingTeamId] = useState<string | null>(null);
   const analyses = teamAnalyses as Record<string, TeamAnalysis>;
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
@@ -100,6 +101,27 @@ export default function BoardPage() {
     setTeamAnalyses(results); setIsAnalyzing(false);
   };
 
+  const handleAnalyzeTeam = async (teamId: string) => {
+    if (selectedTeam === teamId) { setSelectedTeam(null); return; }
+    setSelectedTeam(teamId);
+    if (analyses[teamId]) return;
+    const team = teams.find(t => t.id === teamId);
+    if (!team) return;
+    const members = students.filter(s => team.memberIds.includes(s.id));
+    if (members.length === 0) return;
+    setAnalyzingTeamId(teamId);
+    try {
+      const res = await fetch('/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ team, members }) });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.synergy) setTeamAnalyses({ ...analyses, [teamId]: data });
+      }
+    } catch (err) {
+      console.error('팀 분석 실패:', team.name, err);
+    }
+    setAnalyzingTeamId(null);
+  };
+
   if (teams.length === 0) {
     return (
       <div className="flex h-[calc(100vh-10rem)] items-center justify-center">
@@ -163,14 +185,20 @@ export default function BoardPage() {
                   stats={stats}
                   badge={a?.oneLineSum}
                   studentIds={team.memberIds}
-                  onClickTitle={() => setSelectedTeam(isSelected ? null : team.id)}
+                  onClickTitle={() => handleAnalyzeTeam(team.id)}
                   isSelected={isSelected}
                 >
                   {members.map(s => <Chip key={s.id} student={s} />)}
                   {members.length === 0 && <span className="text-[11px] text-slate-400 py-2">드래그하여 학생 추가</span>}
                 </TeamRow>
 
-                {/* 인라인 분석 - 팀 이름 클릭으로 토글 */}
+                {/* 인라인 분석 - 팀 이름 클릭으로 AI 분석 자동 실행 */}
+                {isSelected && analyzingTeamId === team.id && (
+                  <div className="ml-[140px] mb-3 flex items-center gap-2 text-xs text-violet-600">
+                    <div className="h-3 w-3 animate-spin rounded-full border-2 border-violet-300 border-t-violet-600" />
+                    AI가 팀을 분석하고 있습니다...
+                  </div>
+                )}
                 {a && isSelected && (
                   <div className="ml-[140px] mb-3 grid grid-cols-3 gap-2 text-[11px] text-slate-600 animate-[fadeIn_0.2s]">
                     <div className="rounded-lg bg-blue-50 p-2.5"><strong className="text-blue-700">시너지</strong><br/>{a.synergy}</div>
