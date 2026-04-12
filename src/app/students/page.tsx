@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useStore } from '@/store/useStore';
 import { Student, PersonalityType, TraitType, Gender, WORK_PERSONALITIES, TRAIT_TYPES } from '@/types';
 
@@ -39,6 +39,8 @@ export default function StudentsPage() {
   const [showScoreHelp, setShowScoreHelp] = useState(false);
   const [editingGroupId, setEditingGroupId] = useState<string | null>(null);
   const [editingGroupName, setEditingGroupName] = useState('');
+  const [showImportMenu, setShowImportMenu] = useState(false);
+  const clickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [newGroupName, setNewGroupName] = useState('');
 
   // 학생이 속한 팀 찾기
@@ -154,7 +156,7 @@ export default function StudentsPage() {
             </button>
           </div>
         </div>
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-2">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-2">
           {/* 현재 그룹 */}
           <div
             onClick={() => setActiveGroup(null)}
@@ -172,10 +174,15 @@ export default function StudentsPage() {
               key={g.id}
               onClick={() => {
                 if (editingGroupId === g.id) return;
-                if (confirm(`"${g.name}" (${g.students.length}명)을 불러올까요?`)) setActiveGroup(g.id);
+                // 더블클릭 감지를 위해 싱글클릭 지연
+                if (clickTimerRef.current) { clearTimeout(clickTimerRef.current); clickTimerRef.current = null; return; }
+                clickTimerRef.current = setTimeout(() => {
+                  clickTimerRef.current = null;
+                  if (activeGroupId !== g.id && confirm(`"${g.name}" (${g.students.length}명)을 불러올까요?`)) setActiveGroup(g.id);
+                }, 250);
               }}
-              onDoubleClick={(e) => {
-                e.stopPropagation();
+              onDoubleClick={() => {
+                if (clickTimerRef.current) { clearTimeout(clickTimerRef.current); clickTimerRef.current = null; }
                 setEditingGroupId(g.id);
                 setEditingGroupName(g.name);
               }}
@@ -210,10 +217,31 @@ export default function StudentsPage() {
                   </>
                 )}
               </div>
-              {activeGroupId === g.id && <span className="text-[9px] bg-white/20 rounded px-1.5 py-0.5 font-medium shrink-0 ml-1">활성</span>}
+              <div className="flex items-center gap-1 shrink-0 ml-1">
+                {activeGroupId === g.id && <span className="text-[9px] bg-white/20 rounded px-1.5 py-0.5 font-medium">활성</span>}
+                {/* 불러오기 버튼 (다른 그룹 멤버를 현재에 추가) */}
+                {activeGroupId !== g.id && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (clickTimerRef.current) { clearTimeout(clickTimerRef.current); clickTimerRef.current = null; }
+                      const existingIds = new Set(students.map(s => s.id));
+                      const newStudents = g.students.filter(s => !existingIds.has(s.id));
+                      if (newStudents.length === 0) { alert('불러올 새 학생이 없습니다. (이미 모두 포함)'); return; }
+                      if (confirm(`"${g.name}"에서 ${newStudents.length}명을 현재 그룹에 추가할까요?`)) {
+                        setStudents([...students, ...newStudents]);
+                      }
+                    }}
+                    className="rounded p-1 text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition opacity-0 group-hover:opacity-100"
+                    title={`${g.name} 멤버 불러오기`}
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/><path d="M3 12v6a2 2 0 002 2h4"/><path d="M3 12V6a2 2 0 012-2h4"/></svg>
+                  </button>
+                )}
+              </div>
               {/* 삭제 버튼 */}
               <button
-                onClick={(e) => { e.stopPropagation(); if (confirm(`"${g.name}" 삭제?`)) deleteStudentGroup(g.id); }}
+                onClick={(e) => { e.stopPropagation(); if (clickTimerRef.current) { clearTimeout(clickTimerRef.current); clickTimerRef.current = null; } if (confirm(`"${g.name}" 삭제?`)) deleteStudentGroup(g.id); }}
                 className={`absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition ${activeGroupId === g.id ? 'bg-blue-800' : 'bg-red-500'}`}
               >
                 <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
