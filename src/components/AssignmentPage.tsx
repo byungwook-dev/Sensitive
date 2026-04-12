@@ -164,8 +164,14 @@ export default function AssignmentPage({ mode }: { mode: AssignmentMode }) {
       }
     }
 
-    setTeams(finalTeams);
-    const finalBalance = calculateBalanceScore(finalTeams, students);
+    // 자동배정 후 maxMembers를 실제 배정 인원에 맞춤
+    const adjustedTeams = finalTeams.map(t => ({
+      ...t,
+      maxMembers: Math.max(t.memberIds.length, t.maxMembers),
+      minMembers: Math.min(t.minMembers, t.memberIds.length),
+    }));
+    setTeams(adjustedTeams);
+    const finalBalance = calculateBalanceScore(adjustedTeams, students);
     const logLines = [
       `배정 완료 (${finalSource})`,
       `균형 점수: ${finalBalance.overall} (성적 ${finalBalance.scoreBalance} / 성격시너지 ${finalBalance.personalityBalance} / 성향시너지 ${finalBalance.traitBalance})`,
