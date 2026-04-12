@@ -202,7 +202,7 @@ export default function BoardPage() {
                 {a && isSelected && (
                   <div className="ml-[140px] mb-3 grid grid-cols-3 gap-2 text-[11px] text-slate-600 animate-[fadeIn_0.2s]">
                     <div className="rounded-lg bg-blue-50 p-2.5"><strong className="text-blue-700">시너지</strong><br/>{a.synergy}</div>
-                    <div className="rounded-lg bg-emerald-50 p-2.5"><strong className="text-emerald-700">성향</strong><br/>{a.traitBalance}</div>
+                    <div className="rounded-lg bg-emerald-50 p-2.5"><strong className="text-emerald-700">성향 시너지</strong><br/>{a.traitBalance}</div>
                     <div className="rounded-lg bg-amber-50 p-2.5"><strong className="text-amber-700">성적</strong><br/>{a.scoreInsight}</div>
                     <div className="rounded-lg bg-pink-50 p-2.5"><strong className="text-pink-700">구성</strong><br/>{a.demographics}</div>
                     <div className="rounded-lg bg-red-50 p-2.5"><strong className="text-red-700">주의</strong><br/>{a.caution}</div>
