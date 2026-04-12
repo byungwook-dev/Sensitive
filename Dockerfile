@@ -1,14 +1,14 @@
 FROM node:22-alpine
 WORKDIR /app
 
-# Sensitive 폴더의 package.json만 복사
-COPY Sensitive/package*.json ./
+# package.json만 복사 후 설치
+COPY package*.json ./
 RUN npm install
 
-# Sensitive 폴더 전체 복사
-COPY Sensitive/. .
+# 전체 복사
+COPY . .
 
-# 빌드 시 환경변수 전달!
+# 빌드 시 환경변수 전달
 ARG MONGODB_URI
 ARG NEXT_SERVER_ACTIONS_ENCRYPTION_KEY
 ARG AI_API_KEY
