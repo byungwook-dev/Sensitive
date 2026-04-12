@@ -45,4 +45,5 @@ jobs:
               -e MONGODB_URI=${{ secrets.MONGODB_URI }} \
               -e NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=${{ secrets.NEXT_SERVER_ACTIONS_ENCRYPTION_KEY }} \
               -e AI_API_KEY=${{ secrets.AI_API_KEY }} \
+              -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
               ${{ secrets.DOCKER_USERNAME }}/sensitive:latest
