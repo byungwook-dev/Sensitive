@@ -60,7 +60,7 @@ export default function TeamCard({ team, students, allStudents, onUpdateTeam, on
               onKeyDown={(e) => { if (e.key === 'Enter') { onUpdateTeam(team.id, { name: editName }); setIsEditingName(false); } }}
             />
           ) : (
-            <h4 className="cursor-pointer text-sm font-bold text-slate-900 hover:text-blue-600" onClick={() => setIsEditingName(true)}>
+            <h4 className="cursor-pointer text-sm font-bold text-slate-900 hover:text-blue-600" onDoubleClick={() => setIsEditingName(true)}>
               {team.name}
             </h4>
           )}
