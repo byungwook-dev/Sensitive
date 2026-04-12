@@ -11,17 +11,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout code (전체 히스토리 가져오기)
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
 
-      - name: Build Docker image
+      - name: Build Docker image (캐시 끄기)
         run: |
-          docker build \
+          docker build --no-cache \
             --build-arg MONGODB_URI=${{ secrets.MONGODB_URI }} \
             --build-arg NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=${{ secrets.NEXT_SERVER_ACTIONS_ENCRYPTION_KEY }} \
             --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} \
