@@ -491,8 +491,8 @@ export default function AssignmentPage({ mode }: { mode: AssignmentMode }) {
               {[
                 { label: '성적 균형', value: balance.scoreBalance, desc: '팀 간 평균 성적 차이' },
                 { label: '성별 균형', value: balance.genderBalance, desc: '팀 간 남녀 비율 차이' },
-                { label: '성격 균형', value: balance.personalityBalance, desc: '업무 성격 유형 분산' },
-                { label: '성향 균형', value: balance.traitBalance, desc: '성향 유형 분산 정도' },
+                { label: '성격 균형', value: balance.personalityBalance, desc: '리더형·협동형·분석형 등 6가지 업무 성격이 팀마다 고르게 분산되었는지 (시너지: 리더+협동 ↑, 같은 유형 중복 ↓)' },
+                { label: '성향 균형', value: balance.traitBalance, desc: '외향·내향·감성·이성 등 8가지 성향이 팀마다 보완적으로 배치되었는지 (시너지: 외향+내향 ↑, 같은 성향 중복 ↓)' },
                 { label: '나이 균형', value: balance.ageBalance, desc: '팀 간 평균 나이 차이' },
                 { label: '인원 균형', value: balance.sizeBalance, desc: '팀 간 인원 수 차이' },
               ].map((item) => {
