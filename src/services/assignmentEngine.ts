@@ -112,7 +112,17 @@ export function calculateBalanceScore(teams: Team[], students: Student[], weight
     return { overall: 100, scoreBalance: 100, genderBalance: 100, personalityBalance: 100, traitBalance: 100, ageBalance: 100, sizeBalance: 100 };
   }
 
-  const scoreBalance = R(Math.max(0, 100 - rng(active.map(s => s.avgScore)) * 3 - std(active.map(s => s.avgScore)) * 5));
+  // 팀 간 평균 차이 (기존)
+  const avgPenalty = rng(active.map(s => s.avgScore)) * 3 + std(active.map(s => s.avgScore)) * 5;
+  // 팀 내 편차 균형: 각 팀의 내부 표준편차가 비슷한지 (30+100 ≠ 60+70)
+  const teamInternalStds = teams.filter(t => t.memberIds.length > 0).map(t => {
+    const members = students.filter(s => t.memberIds.includes(s.id));
+    if (members.length < 2) return 0;
+    const scores = members.map(m => m.score);
+    return std(scores);
+  });
+  const internalStdPenalty = teamInternalStds.length >= 2 ? (std(teamInternalStds) * 3 + rng(teamInternalStds) * 1.5) : 0;
+  const scoreBalance = R(Math.max(0, 100 - avgPenalty - internalStdPenalty));
 
   const globalMR = active.reduce((s, t) => s + t.maleCount, 0) / active.reduce((s, t) => s + t.memberCount, 0);
   const gDevs = active.map(s => Math.abs((s.maleCount / s.memberCount) - globalMR));
@@ -387,13 +397,17 @@ function qScore(teams: Team[], sm: Map<string, Student>): number {
     ALL_PERSONALITIES.forEach(p => { pDist[p] = m.filter(x => x.personality === p).length; });
     const tDist: Record<string, number> = {};
     ALL_TRAITS.forEach(tr => { tDist[tr] = m.filter(x => (x.trait || '사교적') === tr).length; });
-    return { mc, avgScore, maleRatio, pDist, tDist };
-  }).filter(Boolean) as { mc: number; avgScore: number; maleRatio: number; pDist: Record<string, number>; tDist: Record<string, number> }[];
+    const scoreStd = mc < 2 ? 0 : std(m.map(x => x.score));
+    return { mc, avgScore, maleRatio, pDist, tDist, scoreStd };
+  }).filter(Boolean) as { mc: number; avgScore: number; maleRatio: number; pDist: Record<string, number>; tDist: Record<string, number>; scoreStd: number }[];
 
   if (data.length < 2) return 100;
 
   // 각 항목별 점수 (0~100)
-  const sScore = Math.max(1, 100 - rng(data.map(d => d.avgScore)) * 3 - std(data.map(d => d.avgScore)) * 5);
+  // 팀 간 평균 차이 + 팀 내 편차 균형 (평균 같아도 분포 다르면 감점)
+  const avgPen = rng(data.map(d => d.avgScore)) * 3 + std(data.map(d => d.avgScore)) * 5;
+  const intStdPen = data.length >= 2 ? (std(data.map(d => d.scoreStd)) * 3 + rng(data.map(d => d.scoreStd)) * 1.5) : 0;
+  const sScore = Math.max(1, 100 - avgPen - intStdPen);
   let pPen = 0;
   ALL_PERSONALITIES.forEach(p => { pPen += std(data.map(d => d.pDist[p] / d.mc)); });
   const pScore = Math.max(1, 100 - pPen * 55);
