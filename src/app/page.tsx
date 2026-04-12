@@ -78,20 +78,28 @@ export default function DashboardPage() {
           {/* 팀별 성적 비교 차트 */}
           <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
             <h3 className="mb-4 text-sm font-bold text-slate-900">팀별 평균 성적 비교</h3>
+            <p className="mb-3 text-[10px] text-slate-400">평균 (편차) — 편차가 작을수록 팀원 간 실력이 고른 팀</p>
             <div className="space-y-2.5">
               {teams.map(team => {
                 const stats = getTeamStats(team, students);
                 if (stats.memberCount === 0) return null;
+                const members = students.filter(s => team.memberIds.includes(s.id));
+                const scores = members.map(m => m.score);
+                const avg = stats.avgScore;
+                const stdDev = scores.length >= 2 ? Math.sqrt(scores.reduce((s, v) => s + (v - avg) ** 2, 0) / scores.length) : 0;
                 const width = Math.max(10, stats.avgScore);
                 return (
                   <div key={team.id} className="flex items-center gap-3">
                     <span className="w-14 text-xs font-semibold text-slate-700 shrink-0 truncate">{team.name}</span>
                     <div className="flex-1 h-6 overflow-hidden rounded-lg bg-slate-50 relative">
                       <div className="h-full rounded-lg bg-gradient-to-r from-blue-400 to-blue-500 transition-all duration-700 flex items-center justify-end pr-2" style={{ width: `${width}%` }}>
-                        <span className="text-[10px] font-bold text-white">{stats.avgScore.toFixed(1)}</span>
+                        <span className="text-[10px] font-bold text-white">{avg.toFixed(1)}</span>
                       </div>
                     </div>
-                    <span className="text-[10px] text-slate-400 w-10 shrink-0">{stats.memberCount}명</span>
+                    <span className={`text-[10px] w-14 shrink-0 text-right font-medium ${stdDev <= 10 ? 'text-emerald-500' : stdDev <= 20 ? 'text-amber-500' : 'text-red-500'}`}>
+                      ±{stdDev.toFixed(1)}
+                    </span>
+                    <span className="text-[10px] text-slate-400 w-8 shrink-0">{stats.memberCount}명</span>
                   </div>
                 );
               })}
