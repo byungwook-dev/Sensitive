@@ -26,7 +26,7 @@ function getMissing(s: Student): string[] {
 }
 
 export default function StudentsPage() {
-  const { students, addStudent, updateStudent, deleteStudent, teams, studentGroups, activeGroupId, addStudentGroup, deleteStudentGroup, setActiveGroup, setStudents, setTeams } = useStore();
+  const { students, addStudent, updateStudent, deleteStudent, teams, studentGroups, activeGroupId, addStudentGroup, deleteStudentGroup, setActiveGroup, setStudents, setTeams, scoreSystem } = useStore();
   const [search, setSearch] = useState('');
   const [genderFilter, setGenderFilter] = useState<string>('all');
   const [personalityFilter, setPersonalityFilter] = useState<string>('all');
@@ -36,6 +36,7 @@ export default function StudentsPage() {
   const [showIncompleteOnly, setShowIncompleteOnly] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showNoteHelp, setShowNoteHelp] = useState(false);
+  const [showScoreHelp, setShowScoreHelp] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
 
   // 학생이 속한 팀 찾기
@@ -241,8 +242,34 @@ export default function StudentsPage() {
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500">업무 성격</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500">성향</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 cursor-pointer select-none" onClick={() => handleSort('score')}>
-                성적 {sortBy === 'score' && (sortDir === 'asc' ? '↑' : '↓')}
+              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500">
+                <div className="flex items-center gap-1.5 relative">
+                  <span className="cursor-pointer select-none" onClick={() => handleSort('score')}>
+                    성적 {sortBy === 'score' && (sortDir === 'asc' ? '↑' : '↓')}
+                  </span>
+                  <button
+                    onClick={() => setShowScoreHelp(!showScoreHelp)}
+                    className={`flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold transition ${showScoreHelp ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500 hover:bg-blue-100 hover:text-blue-600'}`}
+                  >
+                    ?
+                  </button>
+                  {showScoreHelp && (
+                    <div className="absolute top-6 left-0 z-50 w-72 rounded-xl border border-slate-200 bg-white p-4 shadow-xl text-xs font-normal text-slate-600 leading-relaxed">
+                      <p className="font-bold text-slate-800 mb-2 text-[13px]">성적 체계 안내</p>
+                      <p className="mb-2 text-slate-500">
+                        현재 설정: <span className="font-semibold text-blue-600">
+                          {scoreSystem === 'score100' ? '100점 만점' : scoreSystem === 'gpa45' ? '4.5 GPA' : scoreSystem === 'gpa43' ? '4.3 GPA' : scoreSystem === 'grade' ? '등급제 (A~F)' : '직접 입력'}
+                        </span>
+                      </p>
+                      <div className="space-y-1.5">
+                        <p><span className="font-semibold text-slate-700">100점 만점</span> → 0~100 (시험, 모의고사)</p>
+                        <p><span className="font-semibold text-slate-700">4.5 / 4.3 GPA</span> → 대학 학점</p>
+                        <p><span className="font-semibold text-slate-700">등급제</span> → A+, A, B+, ... F</p>
+                      </div>
+                      <p className="mt-2 text-[10px] text-slate-400">모든 성적은 내부적으로 100점 기준으로 변환되어 균형 계산에 사용됩니다. 설정에서 변경 가능합니다.</p>
+                    </div>
+                  )}
+                </div>
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500">팀/반</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500">
