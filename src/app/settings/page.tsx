@@ -232,8 +232,8 @@ function WeightsEditor() {
 
   const items = [
     { key: 'score' as const, label: '성적 균형', color: 'text-blue-600', desc: '팀 간 평균 성적 차이를 최소화합니다. 높을수록 팀별 성적이 고르게 분배됩니다.' },
-    { key: 'personality' as const, label: '성격 유형 균형', color: 'text-purple-600', desc: '외향/내향/분석/감성 등 성격 유형이 팀마다 골고루 섞이도록 합니다.' },
-    { key: 'trait' as const, label: '성향 균형', color: 'text-pink-600', desc: '리더형/실행형/사교적/창의적 등 성향이 팀마다 균등하게 분포되도록 합니다.' },
+    { key: 'personality' as const, label: '성격 시너지', color: 'text-purple-600', desc: '리더+협동, 분석+창의 등 보완적 성격 조합으로 팀 시너지를 높입니다.' },
+    { key: 'trait' as const, label: '성향 시너지', color: 'text-pink-600', desc: '외향+내향, 감성+이성 등 보완적 성향 조합으로 팀 시너지를 높입니다.' },
     { key: 'gender' as const, label: '성별 균형', color: 'text-cyan-600', desc: '남녀 비율이 팀마다 비슷하도록 조정합니다.' },
     { key: 'age' as const, label: '나이 균형', color: 'text-amber-600', desc: '팀 간 평균 나이 차이를 최소화합니다.' },
     { key: 'size' as const, label: '인원 수 균형', color: 'text-slate-600', desc: '팀별 인원 수가 균등하도록 합니다.' },

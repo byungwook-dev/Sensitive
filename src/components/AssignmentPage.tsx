@@ -168,7 +168,7 @@ export default function AssignmentPage({ mode }: { mode: AssignmentMode }) {
     const finalBalance = calculateBalanceScore(finalTeams, students);
     const logLines = [
       `배정 완료 (${finalSource})`,
-      `균형 점수: ${finalBalance.overall} (성적 ${finalBalance.scoreBalance} / 성격 ${finalBalance.personalityBalance} / 성향 ${finalBalance.traitBalance})`,
+      `균형 점수: ${finalBalance.overall} (성적 ${finalBalance.scoreBalance} / 성격시너지 ${finalBalance.personalityBalance} / 성향시너지 ${finalBalance.traitBalance})`,
     ];
     if (aiExplanation) logLines.push(`AI: ${aiExplanation}`);
     logLines.push('---');
@@ -491,8 +491,8 @@ export default function AssignmentPage({ mode }: { mode: AssignmentMode }) {
               {[
                 { label: '성적 균형', value: balance.scoreBalance, desc: '팀 간 평균 성적 차이' },
                 { label: '성별 균형', value: balance.genderBalance, desc: '팀 간 남녀 비율 차이' },
-                { label: '성격 균형', value: balance.personalityBalance, desc: '리더형·협동형·분석형 등 6가지 업무 성격이 팀마다 고르게 분산되었는지 (시너지: 리더+협동 ↑, 같은 유형 중복 ↓)' },
-                { label: '성향 균형', value: balance.traitBalance, desc: '외향·내향·감성·이성 등 8가지 성향이 팀마다 보완적으로 배치되었는지 (시너지: 외향+내향 ↑, 같은 성향 중복 ↓)' },
+                { label: '성격 시너지', value: balance.personalityBalance, desc: '리더+협동 ↑ · 분석+창의 ↑ · 같은 유형 중복 ↓' },
+                { label: '성향 시너지', value: balance.traitBalance, desc: '외향+내향 ↑ · 감성+이성 ↑ · 같은 성향 중복 ↓' },
                 { label: '나이 균형', value: balance.ageBalance, desc: '팀 간 평균 나이 차이' },
                 { label: '인원 균형', value: balance.sizeBalance, desc: '팀 간 인원 수 차이' },
               ].map((item) => {
@@ -556,7 +556,7 @@ export default function AssignmentPage({ mode }: { mode: AssignmentMode }) {
 
             {/* 추천 */}
             <div className="flex flex-wrap gap-1.5">
-              {['성적 균형 맞춰줘', '성격 유형 골고루', '성향 균형 맞춰줘', '리더형 각 팀 1명씩', '김민준이랑 이서연 분리해줘', '8팀부터 10팀 삭제해줘'].map((cmd) => (
+              {['성적 균형 맞춰줘', '성격 시너지 높여줘', '성향 시너지 높여줘', '리더형 각 팀 1명씩', '김민준이랑 이서연 분리해줘', '8팀부터 10팀 삭제해줘'].map((cmd) => (
                 <button
                   key={cmd}
                   onClick={() => setOptimizerInput(cmd)}
@@ -579,7 +579,7 @@ export default function AssignmentPage({ mode }: { mode: AssignmentMode }) {
                       <span className="text-[10px] text-slate-400">/ 100</span>
                     </div>
                     <div className="mt-1.5 text-[10px] text-slate-500 leading-relaxed">
-                      성적 {pendingResult.before.scoreBalance} · 성격 {pendingResult.before.personalityBalance} · 성향 {pendingResult.before.traitBalance}
+                      성적 {pendingResult.before.scoreBalance} · 성격시너지 {pendingResult.before.personalityBalance} · 성향시너지 {pendingResult.before.traitBalance}
                     </div>
                   </div>
                   <div className="rounded-xl bg-white p-3 border-2 border-blue-300">
@@ -593,7 +593,7 @@ export default function AssignmentPage({ mode }: { mode: AssignmentMode }) {
                       )}
                     </div>
                     <div className="mt-1.5 text-[10px] text-slate-500 leading-relaxed">
-                      성적 {pendingResult.after.scoreBalance} · 성격 {pendingResult.after.personalityBalance} · 성향 {pendingResult.after.traitBalance}
+                      성적 {pendingResult.after.scoreBalance} · 성격시너지 {pendingResult.after.personalityBalance} · 성향시너지 {pendingResult.after.traitBalance}
                     </div>
                   </div>
                 </div>

@@ -58,8 +58,8 @@ export default function DashboardPage() {
             <div className="space-y-3">
               {[
                 { label: '성적 균형', value: balance.scoreBalance, color: 'bg-blue-500' },
-                { label: '성격 균형', value: balance.personalityBalance, color: 'bg-purple-500' },
-                { label: '성향 균형', value: balance.traitBalance, color: 'bg-pink-500' },
+                { label: '성격 시너지', value: balance.personalityBalance, color: 'bg-purple-500' },
+                { label: '성향 시너지', value: balance.traitBalance, color: 'bg-pink-500' },
                 { label: '성별 균형', value: balance.genderBalance, color: 'bg-cyan-500' },
                 { label: '나이 균형', value: balance.ageBalance, color: 'bg-amber-500' },
                 { label: '인원 균형', value: balance.sizeBalance, color: 'bg-slate-500' },
