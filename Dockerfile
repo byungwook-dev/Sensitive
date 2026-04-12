@@ -8,7 +8,7 @@ RUN npm install
 # 전체 복사
 COPY . .
 
-# 빌드 시 필요한 환경변수만 ARG/ENV로 설정
+# 빌드 시 필요한 환경변수만 ARG/ENV로 설정!
 ARG MONGODB_URI
 ARG NEXT_SERVER_ACTIONS_ENCRYPTION_KEY
 ARG JWT_SECRET
