@@ -24,7 +24,6 @@ jobs:
           docker build \
             --build-arg MONGODB_URI=${{ secrets.MONGODB_URI }} \
             --build-arg NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=${{ secrets.NEXT_SERVER_ACTIONS_ENCRYPTION_KEY }} \
-            --build-arg NEXT_PUBLIC_AI_API_KEY=${{ secrets.NEXT_PUBLIC_AI_API_KEY }} \
             --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} \
             -t ${{ secrets.DOCKER_USERNAME }}/sensitive:latest .
 
@@ -47,6 +46,6 @@ jobs:
             docker run -d --name sensitive -p 80:3000 \
               -e MONGODB_URI=${{ secrets.MONGODB_URI }} \
               -e NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=${{ secrets.NEXT_SERVER_ACTIONS_ENCRYPTION_KEY }} \
-              -e NEXT_PUBLIC_AI_API_KEY=${{ secrets.NEXT_PUBLIC_AI_API_KEY }} \
+              -e AI_API_KEY=${{ secrets.AI_API_KEY }} \
               -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
               ${{ secrets.DOCKER_USERNAME }}/sensitive:latest
