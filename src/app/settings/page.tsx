@@ -231,12 +231,12 @@ function WeightsEditor() {
   const isValid = total === 100;
 
   const items = [
-    { key: 'score' as const, label: '성적 균형', color: 'text-blue-600' },
-    { key: 'personality' as const, label: '성격 유형 균형', color: 'text-purple-600' },
-    { key: 'trait' as const, label: '성향 균형', color: 'text-pink-600' },
-    { key: 'gender' as const, label: '성별 균형', color: 'text-cyan-600' },
-    { key: 'age' as const, label: '나이 균형', color: 'text-amber-600' },
-    { key: 'size' as const, label: '인원 수 균형', color: 'text-slate-600' },
+    { key: 'score' as const, label: '성적 균형', color: 'text-blue-600', desc: '팀 간 평균 성적 차이를 최소화합니다. 높을수록 팀별 성적이 고르게 분배됩니다.' },
+    { key: 'personality' as const, label: '성격 유형 균형', color: 'text-purple-600', desc: '외향/내향/분석/감성 등 성격 유형이 팀마다 골고루 섞이도록 합니다.' },
+    { key: 'trait' as const, label: '성향 균형', color: 'text-pink-600', desc: '리더형/실행형/사교적/창의적 등 성향이 팀마다 균등하게 분포되도록 합니다.' },
+    { key: 'gender' as const, label: '성별 균형', color: 'text-cyan-600', desc: '남녀 비율이 팀마다 비슷하도록 조정합니다.' },
+    { key: 'age' as const, label: '나이 균형', color: 'text-amber-600', desc: '팀 간 평균 나이 차이를 최소화합니다.' },
+    { key: 'size' as const, label: '인원 수 균형', color: 'text-slate-600', desc: '팀별 인원 수가 균등하도록 합니다.' },
   ];
 
   const handleSave = () => {
@@ -260,15 +260,17 @@ function WeightsEditor() {
           합계 {total}%{isValid ? ' ✓' : ' (100%로 맞춰주세요)'}
         </div>
       </div>
-      <p className="mb-5 text-xs text-slate-500">균형 점수를 계산할 때 각 요소의 비중을 설정합니다. 합이 100%가 되어야 합니다.</p>
+      <p className="mb-2 text-xs text-slate-500">균형 점수를 계산할 때 각 요소의 비중을 설정합니다. 합이 100%가 되어야 합니다.</p>
+      <p className="mb-5 text-xs text-slate-400">※ 로그 기반 곱연산 방식: 한 항목이라도 점수가 낮으면 전체 균형 점수가 크게 떨어집니다. 가중치가 높은 항목일수록 균형 점수에 더 큰 영향을 미칩니다.</p>
 
       <div className="space-y-4">
-        {items.map(({ key, label, color }) => (
+        {items.map(({ key, label, color, desc }) => (
           <div key={key}>
-            <div className="flex items-center justify-between mb-1.5">
+            <div className="flex items-center justify-between mb-0.5">
               <span className="text-sm font-semibold text-slate-700">{label}</span>
               <span className={`text-sm font-bold tabular-nums ${color}`}>{weights[key]}%</span>
             </div>
+            <p className="text-[11px] text-slate-400 mb-1.5">{desc}</p>
             <input
               type="range"
               min={0}
