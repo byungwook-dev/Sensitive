@@ -3,8 +3,7 @@ import Anthropic from '@anthropic-ai/sdk';
 
 export async function POST(req: NextRequest) {
   try {
-    const apiKey = process.env['AI_API_KEY'];
-    const client = new Anthropic({ apiKey });
+    const client = new Anthropic();
     const { messages, context } = await req.json();
 
     // 학생 ID → 이름 매핑

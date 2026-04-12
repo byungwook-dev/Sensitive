@@ -3,8 +3,7 @@ import Anthropic from '@anthropic-ai/sdk';
 
 export async function POST(req: NextRequest) {
   try {
-    const apiKey = process.env['AI_API_KEY'];
-    const client = new Anthropic({ apiKey });
+    const client = new Anthropic();
     const { students, teams } = await req.json();
 
     // 전체 통계 미리 계산해서 AI에게 제공
